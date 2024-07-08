@@ -20,16 +20,17 @@
       let isExpanded = true;
       let isHandled = false;
       let betAmount = 1;
+      let preBetAmount = betAmount;
       let isBetted = false;
       let counterDelayPlay = isNoHasBonusCoin() ? 10 : 0;
-      const counterToStart = 20;
+      const counterToStart = 25;
+      const counterToStop = 40;
 
-      let {
-        counterPlay = 0,
+      let counterPlay = 0,
         counterWin = 0,
         maxCounter = betCounter,
         totalProfit = 0,
-      } = JSON.parse(localStorage?.getItem(`dataBetting`) || "{}");
+        currentProfit = 0;
 
       const initAmount = document.querySelector(
         '[data-testid="currency-amount"]'
@@ -128,15 +129,11 @@
       };
 
       function logInfo() {
-        const dataLocalStorage = JSON.parse(
-          localStorage?.getItem(`dataBetting`) || "{}"
-        );
-
-        console.log("===>counterPlay", dataLocalStorage.counterPlay);
-        console.log("===>counterWin", dataLocalStorage.counterWin);
-        console.log("===>maxCounter", dataLocalStorage.maxCounter);
-        console.log("===>currentProfit", dataLocalStorage.currentProfit);
-        console.log("===>totalProfit", dataLocalStorage.totalProfit);
+        console.log("===>counterPlay", counterPlay);
+        console.log("===>counterWin", counterWin);
+        console.log("===>maxCounter", maxCounter);
+        console.log("===>currentProfit", currentProfit);
+        console.log("===>totalProfit", totalProfit);
       }
 
       function handleToggleBet() {
@@ -203,11 +200,17 @@
           const betX14Button = document.querySelectorAll(".bet-btn")[1];
           const x2Button = betControls[7];
 
+          if (counterToStop > 40) {
+            counterDelayPlay = 0;
+            betCounter = 0;
+            console.log("===>stop");
+          }
+
           if (isBonusCoin()) {
             console.log("===>win x14", betCounter);
 
             if (isBetted) {
-              totalProfit += betAmount * 14;
+              totalProfit += preBetAmount * 14;
               counterWin++;
             }
 
@@ -226,17 +229,18 @@
 
             counterPlay++;
             isBetted = true;
+            preBetAmount = betAmount;
 
             if (betCounter < 13) {
               betControls[betOptionIndex]?.click();
-              totalProfit -= betAmount;
+              totalProfit -= preBetAmount;
               betCounter++;
               console.log("===>bet x14", betCounter);
               betX14Button.click();
             } else if (betCounter < 20) {
               betControls[betOptionIndex]?.click();
               x2Button?.click();
-              totalProfit -= 2 * betAmount;
+              totalProfit -= 2 * preBetAmount;
               betCounter++;
               console.log("===>bet x14", betCounter);
               betX14Button.click();
@@ -244,7 +248,7 @@
               betControls[betOptionIndex]?.click();
               x2Button?.click();
               x2Button?.click();
-              totalProfit -= 4 * betAmount;
+              totalProfit -= 4 * preBetAmount;
               betCounter++;
               console.log("===>bet x14", betCounter);
               betX14Button.click();
@@ -253,7 +257,7 @@
               x2Button?.click();
               x2Button?.click();
               x2Button?.click();
-              totalProfit -= 8 * betAmount;
+              totalProfit -= 8 * preBetAmount;
               betCounter++;
               console.log("===>bet x14", betCounter);
               betX14Button.click();
@@ -263,7 +267,7 @@
               x2Button?.click();
               x2Button?.click();
               x2Button?.click();
-              totalProfit -= 16 * betAmount;
+              totalProfit -= 16 * preBetAmount;
               betCounter++;
               console.log("===>bet x14", betCounter);
               betX14Button.click();
@@ -274,7 +278,7 @@
               x2Button?.click();
               x2Button?.click();
               x2Button?.click();
-              totalProfit -= 32 * betAmount;
+              totalProfit -= 32 * preBetAmount;
               betCounter++;
               console.log("===>bet x14", betCounter);
               betX14Button.click();
@@ -286,7 +290,7 @@
               x2Button?.click();
               x2Button?.click();
               x2Button?.click();
-              totalProfit -= 64 * betAmount;
+              totalProfit -= 64 * preBetAmount;
               betCounter++;
               console.log("===>bet x14", betCounter);
               betX14Button.click();
@@ -299,7 +303,7 @@
               x2Button?.click();
               x2Button?.click();
               x2Button?.click();
-              totalProfit -= 128 * betAmount;
+              totalProfit -= 128 * preBetAmount;
               betCounter++;
               console.log("===>bet x14", betCounter);
               betX14Button.click();
@@ -313,7 +317,7 @@
               x2Button?.click();
               x2Button?.click();
               x2Button?.click();
-              totalProfit -= 256 * betAmount;
+              totalProfit -= 256 * preBetAmount;
               betCounter++;
               console.log("===>bet x14", betCounter);
               betX14Button.click();
@@ -328,7 +332,7 @@
               x2Button?.click();
               x2Button?.click();
               x2Button?.click();
-              totalProfit -= 512 * betAmount;
+              totalProfit -= 512 * preBetAmount;
               betCounter++;
               console.log("===>bet x14", betCounter);
               betX14Button.click();
@@ -337,19 +341,8 @@
 
           totalProfit = parseFloat(totalProfit.toFixed(5));
           maxCounter = Math.max(counterDelayPlay, maxCounter);
-          const currentProfit = parseFloat(
+          currentProfit = parseFloat(
             (Number(currentAmount) - Number(initAmount)).toFixed(5)
-          );
-
-          localStorage?.setItem(
-            `dataBetting`,
-            JSON.stringify({
-              totalProfit,
-              counterPlay,
-              counterWin,
-              maxCounter,
-              currentProfit,
-            })
           );
 
           logInfo();
@@ -368,7 +361,7 @@
       hideElements(elementsToHide);
 
       setInterval(() => {
-        fetch(window.location.href);
+        fetch(window.location.href).catch(console.error);
       }, 10000);
     }, 1000);
   });
