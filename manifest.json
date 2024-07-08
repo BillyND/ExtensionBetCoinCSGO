@@ -1,9 +1,22 @@
 {
   "manifest_version": 3,
-  "name": "AUTO BET COIN",
+  "name": "CSGO Empire Betting",
   "version": "1.0",
-  "description": "Mô tả Extension",
-  "permissions": ["activeTab"],
+  "description": "Automates betting on CSGO Empire roulette.",
+  "permissions": [
+    "activeTab",
+    "storage"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://csgoempire.com/roulette"
+      ],
+      "js": [
+        "content.js"
+      ]
+    }
+  ],
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
@@ -16,11 +29,5 @@
     "16": "images/icon16.png",
     "48": "images/icon48.png",
     "128": "images/icon128.png"
-  },
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["content.js"]
-    }
-  ]
+  }
 }

@@ -124,6 +124,18 @@
         ].children[0].className.includes("coin-bonus");
       };
 
+      function logInfo() {
+        const dataLocalStorage = JSON.parse(
+          localStorage?.getItem(`dataBetting`) || "{}"
+        );
+
+        console.log("===>counterPlay", dataLocalStorage.counterPlay);
+        console.log("===>counterWin", dataLocalStorage.counterWin);
+        console.log("===>maxCounter", dataLocalStorage.maxCounter);
+        console.log("===>currentProfit", dataLocalStorage.currentProfit);
+        console.log("===>totalProfit", dataLocalStorage.totalProfit);
+      }
+
       function handleToggleBet() {
         hideElements(elementsToHide);
         isRunning = !isRunning;
@@ -204,7 +216,10 @@
 
             console.log("===>counterDelayPlay:", counterDelayPlay);
 
-            if (counterDelayPlay < counterToStart) return;
+            if (counterDelayPlay < counterToStart) {
+              logInfo();
+              return;
+            }
 
             counterPlay++;
             isBetted = true;
@@ -323,7 +338,7 @@
           currentProfit = Number(currentAmount) - Number(initAmount);
 
           localStorage?.setItem(
-            `maxCounter-${maxCounter}`,
+            `dataBetting`,
             JSON.stringify({
               totalProfit,
               counterPlay,
@@ -333,15 +348,7 @@
             })
           );
 
-          const dataLocalStorage = JSON.parse(
-            localStorage?.getItem(`maxCounter-${maxCounter}`) || "{}"
-          );
-
-          console.log("===>counterPlay", dataLocalStorage.counterPlay);
-          console.log("===>counterWin", dataLocalStorage.counterWin);
-          console.log("===>maxCounter", dataLocalStorage.maxCounter);
-          console.log("===>currentProfit", dataLocalStorage.currentProfit);
-          console.log("===>totalProfit", dataLocalStorage.totalProfit);
+          logInfo();
         }
       }
 
