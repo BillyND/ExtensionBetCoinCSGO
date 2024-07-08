@@ -3,6 +3,7 @@
     setTimeout(() => {
       if (window?.location?.href !== "https://csgoempire.com/roulette") return;
 
+      // Check if no bonus coin is present in the previous rolls
       const isNoHasBonusCoin = () => {
         const previousRolls = Array.from(
           document.querySelectorAll(".previous-rolls-item")
@@ -23,8 +24,8 @@
       let preBetAmount = betAmount;
       let isBetted = false;
       let counterDelayPlay = isNoHasBonusCoin() ? 10 : 0;
-      const counterToStart = 25;
-      const counterToStop = 40;
+      const counterToStart = 20; // Default value
+      const counterToStop = 40; // Default value
 
       let counterPlay = 0,
         counterWin = 0,
@@ -48,6 +49,7 @@
         ".mb-lg.px-lg.-mx-lg.mt-xxl",
       ];
 
+      // Function to hide specified elements
       const hideElements = (selectors) => {
         selectors.forEach((selector) => {
           const element = document.querySelector(selector);
@@ -55,6 +57,7 @@
         });
       };
 
+      // Function to create an HTML element with specified tag, CSS, and text content
       const createElement = (tag, cssText, textContent = "") => {
         const el = document.createElement(tag);
         el.style.cssText = cssText;
@@ -68,6 +71,7 @@
         `position: fixed; background-color: rgb(206, 206, 206); top: 10px; left: 10px; z-index: 999; padding: 10px; width: 220px; height: fit-content; border: 1px solid black; border-radius: 10px; display: grid; gap: 20px; color: black;`
       );
 
+      // Function to create a button with specified text, click handler, and styles
       const createButton = (text, onClick, styles = "") => {
         const button = createElement(
           "button",
@@ -78,6 +82,7 @@
         return button;
       };
 
+      // Function to create a select element with specified options
       const createSelect = (options) => {
         const select = createElement(
           "select",
@@ -91,8 +96,25 @@
         return select;
       };
 
+      // Function to create an input element with specified placeholder and default value
+      const createInput = (placeholder, defaultValue) => {
+        const input = createElement(
+          "input",
+          `padding: 5px 10px; width: 100%; min-width: 200px; border-radius: 10px;`,
+          ""
+        );
+        input.placeholder = placeholder;
+        input.value = defaultValue;
+        return input;
+      };
+
       const startBetButton = createButton("Start", handleToggleBet);
       const betSelect = createSelect(betOptions);
+      const counterToStartInput = createInput(
+        "Counter to Start",
+        counterToStart
+      );
+      const counterToStopInput = createInput("Counter to Stop", counterToStop);
 
       const betStatusLabel = createElement(
         "label",
@@ -112,6 +134,8 @@
 
       betContainer.append(
         betSelect,
+        counterToStartInput,
+        counterToStopInput,
         startBetButton,
         betStatusLabel,
         betInfoLabel,
@@ -128,6 +152,7 @@
         ].children[0].className.includes("coin-bonus");
       };
 
+      // Log betting info to the console
       function logInfo() {
         console.log("===>counterPlay", counterPlay);
         console.log("===>counterWin", counterWin);
@@ -136,6 +161,7 @@
         console.log("===>totalProfit", totalProfit);
       }
 
+      // Toggle the betting process
       function handleToggleBet() {
         hideElements(elementsToHide);
         isRunning = !isRunning;
@@ -186,6 +212,7 @@
           window.location.reload();
         }
 
+        // Handle the betting logic
         function handleBet() {
           clearButton?.click();
 
@@ -197,10 +224,14 @@
             document.querySelectorAll(".bet-input__controls-inner button")
           );
 
-          const betX14Button = document.querySelectorAll(".bet-btn")[1];
+          const betX14Button = document.querySelector(".wheel__item absolute");
+          // const betX14Button = document.querySelectorAll(".bet-btn")[1];
           const x2Button = betControls[7];
 
-          if (counterToStop > 40) {
+          const counterToStart = parseInt(counterToStartInput.value, 10) || 20;
+          const counterToStop = parseInt(counterToStopInput.value, 10) || 40;
+
+          if (counterDelayPlay >= counterToStop) {
             counterDelayPlay = 0;
             betCounter = 0;
             console.log("===>stop");
@@ -236,14 +267,14 @@
               totalProfit -= preBetAmount;
               betCounter++;
               console.log("===>bet x14", betCounter);
-              betX14Button.click();
+              betX14Button?.click();
             } else if (betCounter < 20) {
               betControls[betOptionIndex]?.click();
               x2Button?.click();
               totalProfit -= 2 * preBetAmount;
               betCounter++;
               console.log("===>bet x14", betCounter);
-              betX14Button.click();
+              betX14Button?.click();
             } else if (betCounter < 27) {
               betControls[betOptionIndex]?.click();
               x2Button?.click();
@@ -251,7 +282,7 @@
               totalProfit -= 4 * preBetAmount;
               betCounter++;
               console.log("===>bet x14", betCounter);
-              betX14Button.click();
+              betX14Button?.click();
             } else if (betCounter < 34) {
               betControls[betOptionIndex]?.click();
               x2Button?.click();
@@ -260,7 +291,7 @@
               totalProfit -= 8 * preBetAmount;
               betCounter++;
               console.log("===>bet x14", betCounter);
-              betX14Button.click();
+              betX14Button?.click();
             } else if (betCounter < 41) {
               betControls[betOptionIndex]?.click();
               x2Button?.click();
@@ -270,7 +301,7 @@
               totalProfit -= 16 * preBetAmount;
               betCounter++;
               console.log("===>bet x14", betCounter);
-              betX14Button.click();
+              betX14Button?.click();
             } else if (betCounter < 49) {
               betControls[betOptionIndex]?.click();
               x2Button?.click();
@@ -281,7 +312,7 @@
               totalProfit -= 32 * preBetAmount;
               betCounter++;
               console.log("===>bet x14", betCounter);
-              betX14Button.click();
+              betX14Button?.click();
             } else if (betCounter < 55) {
               betControls[betOptionIndex]?.click();
               x2Button?.click();
@@ -293,7 +324,7 @@
               totalProfit -= 64 * preBetAmount;
               betCounter++;
               console.log("===>bet x14", betCounter);
-              betX14Button.click();
+              betX14Button?.click();
             } else if (betCounter < 62) {
               betControls[betOptionIndex]?.click();
               x2Button?.click();
@@ -306,7 +337,7 @@
               totalProfit -= 128 * preBetAmount;
               betCounter++;
               console.log("===>bet x14", betCounter);
-              betX14Button.click();
+              betX14Button?.click();
             } else if (betCounter < 69) {
               betControls[betOptionIndex]?.click();
               x2Button?.click();
@@ -320,7 +351,7 @@
               totalProfit -= 256 * preBetAmount;
               betCounter++;
               console.log("===>bet x14", betCounter);
-              betX14Button.click();
+              betX14Button?.click();
             } else if (betCounter < 76) {
               betControls[betOptionIndex]?.click();
               x2Button?.click();
@@ -335,7 +366,7 @@
               totalProfit -= 512 * preBetAmount;
               betCounter++;
               console.log("===>bet x14", betCounter);
-              betX14Button.click();
+              betX14Button?.click();
             }
           }
 
@@ -349,13 +380,19 @@
         }
       }
 
+      // Toggle the size of the betting container
       function handleToggleSize() {
         isExpanded = !isExpanded;
         betContainer.style.width = isExpanded ? "220px" : "30px";
         betContainer.style.height = isExpanded ? "fit-content" : "30px";
-        [betSelect, startBetButton, betStatusLabel, betInfoLabel].forEach(
-          (el) => (el.style.display = isExpanded ? "block" : "none")
-        );
+        [
+          betSelect,
+          counterToStartInput,
+          counterToStopInput,
+          startBetButton,
+          betStatusLabel,
+          betInfoLabel,
+        ].forEach((el) => (el.style.display = isExpanded ? "block" : "none"));
       }
 
       hideElements(elementsToHide);
