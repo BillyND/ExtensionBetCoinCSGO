@@ -3,6 +3,18 @@
     setTimeout(() => {
       if (window?.location?.href !== "https://csgoempire.com/roulette") return;
 
+      const isNoHasBonusCoin = () => {
+        const previousRolls = Array.from(
+          document.querySelectorAll(".previous-rolls-item")
+        );
+
+        const itemHasBonusCoin = previousRolls.filter((i) =>
+          i.children[0].className.includes("coin-bonus")
+        );
+
+        return !itemHasBonusCoin.length;
+      };
+
       let isRunning = false;
       let betCounter = 0;
       let isExpanded = true;
@@ -110,18 +122,6 @@
         return previousRolls[
           previousRolls.length - 1
         ].children[0].className.includes("coin-bonus");
-      };
-
-      const isNoHasBonusCoin = () => {
-        const previousRolls = Array.from(
-          document.querySelectorAll(".previous-rolls-item")
-        );
-
-        const itemHasBonusCoin = previousRolls.filter((i) =>
-          i.children[0].className.includes("coin-bonus")
-        );
-
-        return !itemHasBonusCoin.length;
       };
 
       function handleToggleBet() {
