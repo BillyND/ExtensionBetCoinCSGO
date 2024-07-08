@@ -19,14 +19,17 @@
       let betCounter = 0;
       let isExpanded = true;
       let isHandled = false;
-      let totalProfit = 0;
       let betAmount = 1;
-      let counterPlay = 0;
-      let counterWin = 0;
-      let maxCounter = betCounter;
       let isBetted = false;
       let counterDelayPlay = isNoHasBonusCoin() ? 10 : 0;
       const counterToStart = 20;
+
+      let {
+        counterPlay = 0,
+        counterWin = 0,
+        maxCounter = betCounter,
+        totalProfit = 0,
+      } = JSON.parse(localStorage?.getItem(`dataBetting`) || "{}");
 
       const initAmount = document.querySelector(
         '[data-testid="currency-amount"]'
@@ -333,9 +336,10 @@
           }
 
           totalProfit = parseFloat(totalProfit.toFixed(5));
-          maxCounter =
-            counterDelayPlay > maxCounter ? counterDelayPlay : maxCounter;
-          currentProfit = Number(currentAmount) - Number(initAmount);
+          maxCounter = Math.max(counterDelayPlay, maxCounter);
+          const currentProfit = parseFloat(
+            (Number(currentAmount) - Number(initAmount)).toFixed(5)
+          );
 
           localStorage?.setItem(
             `dataBetting`,
