@@ -12,7 +12,7 @@
         i.children[0].className.includes("coin-bonus")
       );
 
-      return !itemHasBonusCoin.length;
+      return !itemHasBonusCoin.length && previousRolls;
     };
 
     let isRunning = false;
@@ -27,7 +27,8 @@
     const counterToStop = localStorage.getItem("counterToStopBetting") || 40; // Default value
 
     let counterWin = 0,
-      totalProfit = 0;
+      totalProfit = 0,
+      maxCounter = betCounter;
 
     const elementsToHide = [
       ".bet-containers",
@@ -553,6 +554,7 @@
         }
 
         totalProfit = parseFloat(totalProfit.toFixed(5));
+        maxCounter = Math.max(counterDelayPlay, maxCounter);
 
         logInfo();
       }
@@ -583,6 +585,6 @@
 
     setInterval(() => {
       fetch(window.location.href).catch(console.error);
-    }, 10000);
+    }, 60000);
   }, 2000);
 })();
