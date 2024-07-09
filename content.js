@@ -19,22 +19,15 @@
     let betCounter = 0;
     let isExpanded = true;
     let isHandled = false;
-    let betAmount = 1;
+    let betAmount = 0;
     let preBetAmount = betAmount;
     let isBetted = false;
     let counterDelayPlay = isNoHasBonusCoin() ? 10 : 0;
     const counterToStart = localStorage.getItem("counterToStartBetting") || 20; // Default value
     const counterToStop = localStorage.getItem("counterToStopBetting") || 40; // Default value
 
-    let counterPlay = 0,
-      counterWin = 0,
-      maxCounter = betCounter,
-      totalProfit = 0,
-      currentProfit = 0;
-
-    const initAmount = document.querySelector(
-      '[data-testid="currency-amount"]'
-    )?.textContent;
+    let counterWin = 0,
+      totalProfit = 0;
 
     const elementsToHide = [
       ".bet-containers",
@@ -203,10 +196,8 @@
 
     // Log betting info to the console
     function logInfo() {
-      console.log("===>counterPlay", counterPlay);
+      console.log("===>counterDelayPlay:", counterDelayPlay);
       console.log("===>counterWin", counterWin);
-      console.log("===>maxCounter", maxCounter);
-      console.log("===>currentProfit", currentProfit);
       console.log("===>totalProfit", totalProfit);
     }
 
@@ -246,8 +237,8 @@
             !isHandled
           ) {
             console.clear();
-            hideElements(elementsToHide);
             handleBet();
+            hideElements(elementsToHide);
             isHandled = true;
           } else if (
             !currentTimeText?.includes("10,") &&
@@ -264,10 +255,6 @@
       function handleBet() {
         clearButton?.click();
 
-        const currentAmount = document.querySelector(
-          '[data-testid="currency-amount"]'
-        )?.textContent;
-
         const betControls = Array.from(
           document.querySelectorAll(".bet-input__controls-inner button")
         );
@@ -283,13 +270,12 @@
         if (counterDelayPlay >= counterToStop) {
           counterDelayPlay = 0;
           betCounter = 0;
-          console.log("===>stop");
+          console.log("===>STOP");
         }
 
         if (isBonusCoin()) {
-          console.log("===>win x14", betCounter);
-
           if (isBetted) {
+            console.log("===>win x14", betCounter);
             totalProfit += preBetAmount * 14;
             counterWin++;
           }
@@ -299,20 +285,18 @@
           betCounter = 0;
         } else {
           counterDelayPlay++;
-
-          console.log("===>counterDelayPlay:", counterDelayPlay);
+          isBetted = false;
 
           if (counterDelayPlay < counterToStart) {
             logInfo();
             return;
           }
 
-          counterPlay++;
           isBetted = true;
-          preBetAmount = betAmount;
 
           if (betCounter < 13) {
             betControls[betOptionIndex]?.click();
+            preBetAmount = betAmount;
             totalProfit -= preBetAmount;
             betCounter++;
             console.log("===>bet x14", betCounter);
@@ -320,7 +304,8 @@
           } else if (betCounter < 20) {
             betControls[betOptionIndex]?.click();
             x2Button?.click();
-            totalProfit -= 2 * preBetAmount;
+            preBetAmount = 2 * betAmount;
+            totalProfit -= preBetAmount;
             betCounter++;
             console.log("===>bet x14", betCounter);
             betX14Button?.click();
@@ -328,7 +313,8 @@
             betControls[betOptionIndex]?.click();
             x2Button?.click();
             x2Button?.click();
-            totalProfit -= 4 * preBetAmount;
+            preBetAmount = 4 * betAmount;
+            totalProfit -= preBetAmount;
             betCounter++;
             console.log("===>bet x14", betCounter);
             betX14Button?.click();
@@ -337,7 +323,8 @@
             x2Button?.click();
             x2Button?.click();
             x2Button?.click();
-            totalProfit -= 8 * preBetAmount;
+            preBetAmount = 8 * betAmount;
+            totalProfit -= preBetAmount;
             betCounter++;
             console.log("===>bet x14", betCounter);
             betX14Button?.click();
@@ -347,7 +334,8 @@
             x2Button?.click();
             x2Button?.click();
             x2Button?.click();
-            totalProfit -= 16 * preBetAmount;
+            preBetAmount = 16 * betAmount;
+            totalProfit -= preBetAmount;
             betCounter++;
             console.log("===>bet x14", betCounter);
             betX14Button?.click();
@@ -358,7 +346,8 @@
             x2Button?.click();
             x2Button?.click();
             x2Button?.click();
-            totalProfit -= 32 * preBetAmount;
+            preBetAmount = 32 * betAmount;
+            totalProfit -= preBetAmount;
             betCounter++;
             console.log("===>bet x14", betCounter);
             betX14Button?.click();
@@ -370,7 +359,8 @@
             x2Button?.click();
             x2Button?.click();
             x2Button?.click();
-            totalProfit -= 64 * preBetAmount;
+            preBetAmount = 64 * betAmount;
+            totalProfit -= preBetAmount;
             betCounter++;
             console.log("===>bet x14", betCounter);
             betX14Button?.click();
@@ -383,7 +373,8 @@
             x2Button?.click();
             x2Button?.click();
             x2Button?.click();
-            totalProfit -= 128 * preBetAmount;
+            preBetAmount = 128 * betAmount;
+            totalProfit -= preBetAmount;
             betCounter++;
             console.log("===>bet x14", betCounter);
             betX14Button?.click();
@@ -397,7 +388,8 @@
             x2Button?.click();
             x2Button?.click();
             x2Button?.click();
-            totalProfit -= 256 * preBetAmount;
+            preBetAmount = 256 * betAmount;
+            totalProfit -= preBetAmount;
             betCounter++;
             console.log("===>bet x14", betCounter);
             betX14Button?.click();
@@ -412,7 +404,148 @@
             x2Button?.click();
             x2Button?.click();
             x2Button?.click();
-            totalProfit -= 512 * preBetAmount;
+            preBetAmount = 512 * betAmount;
+            totalProfit -= preBetAmount;
+            betCounter++;
+            console.log("===>bet x14", betCounter);
+            betX14Button?.click();
+          } else if (betCounter < 83) {
+            betControls[betOptionIndex]?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            preBetAmount = 1024 * betAmount;
+            totalProfit -= preBetAmount;
+            betCounter++;
+            console.log("===>bet x14", betCounter);
+            betX14Button?.click();
+          } else if (betCounter < 90) {
+            betControls[betOptionIndex]?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            preBetAmount = 2048 * betAmount;
+            totalProfit -= preBetAmount;
+            betCounter++;
+            console.log("===>bet x14", betCounter);
+            betX14Button?.click();
+          } else if (betCounter < 97) {
+            betControls[betOptionIndex]?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            preBetAmount = 4096 * betAmount;
+            totalProfit -= preBetAmount;
+            betCounter++;
+            console.log("===>bet x14", betCounter);
+            betX14Button?.click();
+          } else if (betCounter < 104) {
+            betControls[betOptionIndex]?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            preBetAmount = 8192 * betAmount;
+            totalProfit -= preBetAmount;
+            betCounter++;
+            console.log("===>bet x14", betCounter);
+            betX14Button?.click();
+          } else if (betCounter < 111) {
+            betControls[betOptionIndex]?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            preBetAmount = 16384 * betAmount;
+            totalProfit -= preBetAmount;
+            betCounter++;
+            console.log("===>bet x14", betCounter);
+            betX14Button?.click();
+          } else if (betCounter < 118) {
+            betControls[betOptionIndex]?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            preBetAmount = 32768 * betAmount;
+            totalProfit -= preBetAmount;
+            betCounter++;
+            console.log("===>bet x14", betCounter);
+            betX14Button?.click();
+          } else if (betCounter < 125) {
+            betControls[betOptionIndex]?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            x2Button?.click();
+            preBetAmount = 65536 * betAmount;
+            totalProfit -= preBetAmount;
             betCounter++;
             console.log("===>bet x14", betCounter);
             betX14Button?.click();
@@ -420,10 +553,6 @@
         }
 
         totalProfit = parseFloat(totalProfit.toFixed(5));
-        maxCounter = Math.max(counterDelayPlay, maxCounter);
-        currentProfit = parseFloat(
-          (Number(currentAmount) - Number(initAmount)).toFixed(5)
-        );
 
         logInfo();
       }
