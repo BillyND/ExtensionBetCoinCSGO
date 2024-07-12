@@ -157,8 +157,8 @@
       const testModeLabel = createElement(
         "label",
         `width: auto; height: auto; min-width: unset; color: black; cursor: pointer; -webkit-user-select: none; /* Safari */
-        -ms-user-select: none; /* IE 10 and IE 11 */
-        user-select: none; /* Standard syntax */`,
+          -ms-user-select: none; /* IE 10 and IE 11 */
+          user-select: none; /* Standard syntax */`,
         "Test mode",
         { name: "for", value: "test-mode-check-box" }
       );
@@ -306,8 +306,8 @@
             : document.querySelectorAll(".bet-btn")[1];
           const x2Button = betControls[7];
 
-          const counterToStart = parseInt(counterToStartInput.value, 10) || 20;
-          const counterToStop = parseInt(counterToStopInput.value, 10) || 40;
+          const counterToStart = parseInt(counterToStartInput.value, 10);
+          const counterToStop = parseInt(counterToStopInput.value, 10);
 
           if (counterDelayPlay >= counterToStop) {
             counterDelayPlay = 0;
@@ -316,21 +316,30 @@
           }
 
           if (isBonusCoin()) {
+            counterDelayPlay++;
+            saveDataIntoLocalStorage();
+
             if (isBetted) {
               console.log("===>win x14", betCounter);
               totalProfit += preBetAmount * 14;
               counterWin++;
-              saveDataIntoLocalStorage();
+              counterDelayPlay = 0;
+              isBetted = false;
+            } else {
+              isBetted = true;
+              betControls[betOptionIndex]?.click();
+              preBetAmount = betAmount;
+              totalProfit -= preBetAmount;
+              betCounter++;
+
+              betX14Button?.click();
             }
 
-            isBetted = false;
-            counterDelayPlay = 0;
             betCounter = 0;
           } else {
-            counterDelayPlay++;
             isBetted = false;
 
-            if (counterDelayPlay < counterToStart) {
+            if (counterDelayPlay <= counterToStart) {
               logInfo();
               return;
             }
