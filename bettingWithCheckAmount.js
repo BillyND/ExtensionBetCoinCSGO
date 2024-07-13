@@ -12,7 +12,7 @@
   let counterWin = 0,
     totalProfit = 0;
 
-  const stopProfitLost = localStorage.getItem("stopProfitLost") || 10;
+  const stopTotalCoinsLost = localStorage.getItem("stopTotalCoinsLost") || 10;
 
   const elementsToHide = [
     ".pt-lg",
@@ -103,17 +103,23 @@
   );
   const startBetButton = createButton("Start", handleToggleBet);
   const betSelect = createSelect(betOptions);
-  const labelSelect = createElement("div", "", "Coin to betting");
+  const labelSelect = createElement("div", "", "Coins to start betting");
   const betStatusLabel = createElement("label", "width: 100%; color: black;");
 
-  const stopProfitLostInput = createInput("Stop profit lost", stopProfitLost);
-  const labelStopInput = createElement("div", "", "Stop profit lost");
+  const stopTotalCoinsLostInput = createInput(
+    "Stop when total coins lost",
+    stopTotalCoinsLost
+  );
+  const labelStopInput = createElement("div", "", "Stop when total coins lost");
 
-  stopProfitLostInput.addEventListener("input", function () {
-    localStorage.setItem("stopProfitLost", stopProfitLostInput.value.trim());
+  stopTotalCoinsLostInput.addEventListener("input", function () {
+    localStorage.setItem(
+      "stopTotalCoinsLost",
+      stopTotalCoinsLostInput.value.trim()
+    );
   });
 
-  wrapStopProfitLost.append(stopProfitLostInput, labelStopInput);
+  wrapStopProfitLost.append(stopTotalCoinsLostInput, labelStopInput);
   wrapSelect.append(betSelect, labelSelect);
 
   const testModeCheckbox = createElement(
@@ -237,20 +243,20 @@
         );
 
         if (
-          (currentTimeText?.includes("2,") ||
-            currentTimeText?.includes("2.")) &&
-          !currentTimeText?.includes("12,") &&
-          !currentTimeText?.includes("12.") &&
+          (currentTimeText?.includes("1,") ||
+            currentTimeText?.includes("1.")) &&
+          !currentTimeText?.includes("11,") &&
+          !currentTimeText?.includes("11.") &&
           !isHandled
         ) {
           handleBet();
           hideElements(elementsToHide);
           isHandled = true;
         } else if (
-          (!currentTimeText?.includes("2,") &&
-            !currentTimeText?.includes("2.")) ||
-          currentTimeText?.includes("12,") ||
-          currentTimeText?.includes("12.")
+          (!currentTimeText?.includes("1,") &&
+            !currentTimeText?.includes("1.")) ||
+          currentTimeText?.includes("11,") ||
+          currentTimeText?.includes("11.")
         ) {
           isHandled = false;
         }
@@ -306,7 +312,7 @@
           console.log("===> Lose, totalProfit", totalProfit);
           saveDataIntoLocalStorage();
 
-          if (totalProfit < -stopProfitLost) {
+          if (totalProfit < -stopTotalCoinsLost) {
             window.location.reload();
             return;
           }
@@ -346,13 +352,14 @@
   function handleToggleSize() {
     isExpanded = !isExpanded;
     betContainer.style.width = isExpanded ? "230px" : "77px";
-    betContainer.style.height = isExpanded ? "157.5px" : "30px";
+    betContainer.style.height = isExpanded ? "256px" : "30px";
     betContainer.style.paddingTop = isExpanded ? "10px" : "0";
     toggleSizeButton.textContent = isExpanded ? "Close" : "Open";
 
     [
       wrapSelect,
       wrapTestMode,
+      wrapStopProfitLost,
       wrapTestMode,
       startBetButton,
       betStatusLabel,
