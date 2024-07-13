@@ -1,6 +1,6 @@
 // Retrieve an array of children elements from a specified grid in the page layout
-const startBetting = 0;
-const stopBetting = 1;
+const startBetting = 10;
+const stopBetting = 60;
 const keyProfit = `${startBetting}${stopBetting}`;
 let gridItems = Array.from(
   document.querySelector(".page-layout__inner > div > .grid").children
@@ -72,4 +72,5 @@ bonusDistances.forEach((distance) => {
   console.log(distance);
 });
 
+console.log("===>bonusDistances:", bonusDistances.length);
 console.log("===>totalProfit:", totalProfit);
