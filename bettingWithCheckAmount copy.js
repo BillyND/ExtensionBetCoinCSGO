@@ -14,7 +14,6 @@
   let isPlayLessSide = true;
   let counterLose = 0;
   let maxCounterLose = 0;
-  let timeStart = 0;
 
   const stopTotalCoinsLost = localStorage.getItem("stopTotalCoinsLost") || 10;
   const betOptions = [0.01, 0.1, 1];
@@ -36,10 +35,8 @@
     ".support-wrap",
   ];
 
-  // Toggle the betting process
   const handleToggleBet = () => {
     hideElements(elementsToHide);
-    timeStart = Date.now();
 
     if (!isRunning) {
       const isConfirmStart = confirm("Want to start?");
@@ -52,7 +49,6 @@
     const clearButton = document.querySelector(".button-pill");
     clearButton?.click();
 
-    // Function to inject keyframes for wave animation into the document
     function addWaveAnimation() {
       const styleSheet = document.styleSheets[0];
       const keyframes = `@keyframes wave {
@@ -70,7 +66,6 @@
       styleSheet.insertRule(keyframes, styleSheet.cssRules.length);
     }
 
-    // Function to update the background color and add wave animation to the startBetButton
     function updateStartBetButtonColor(isRunning) {
       startBetButton.style.setProperty(
         "background-color",
@@ -78,7 +73,6 @@
         "important"
       );
 
-      // Create and apply the wave animation class if it doesn't already exist
       if (!document.querySelector(".wave-animation")) {
         const style = document.createElement("style");
         style.innerHTML = `
@@ -91,7 +85,6 @@
         addWaveAnimation();
       }
 
-      // Apply or remove the wave animation based on isRunning status
       if (isRunning) {
         startBetButton.classList.add("wave-animation");
       } else {
@@ -131,7 +124,7 @@
           setTimeout(() => {
             handleBet();
             hideElements(elementsToHide);
-          }, 700);
+          }, 500);
         } else if (
           (!currentTimeText?.includes("2,") &&
             !currentTimeText?.includes("2.")) ||
@@ -145,7 +138,6 @@
       window.location.reload();
     }
 
-    // Handle the betting logic
     const handleBet = () => {
       console.clear();
 
@@ -161,9 +153,6 @@
         currencyAmounts[2]?.textContent?.replace(",", "")
       );
       const tAmount = Number(currencyAmounts[4]?.textContent?.replace(",", ""));
-
-      const realBetCtButton = document.querySelectorAll(".bet-btn")[0];
-      const realBetTButton = document.querySelectorAll(".bet-btn")[2];
 
       const betCtButton = testModeCheckbox.checked
         ? document.querySelector(".wheel__item.absolute")
@@ -182,14 +171,12 @@
           totalProfit += previousBetAmount;
           saveDataIntoLocalStorage();
 
-          // Reset validation state
           counterLose = 0;
           totalLost = 0;
           previousBetAmount = 0;
           previousBetType = "";
           isBetted = false;
 
-          // Log profit
           console.log("Win, totalProfit: ", totalProfit);
         } else {
           x2Button?.click();
@@ -201,15 +188,14 @@
             previousBetAmount = 0;
             totalLost = 0;
             clearButton?.click();
+            betControls[betOptionIndex]?.click();
           }
 
           if (totalProfit <= -2 * stopTotalCoinsLostInput.value) {
             clearButton?.click();
-            window.location.reload();
-            return;
+            betControls[betOptionIndex]?.click();
           }
 
-          // Log profit
           console.log("Lose, totalProfit: ", totalProfit);
         }
       }
@@ -226,9 +212,6 @@
         totalProfit -= previousBetAmount;
         totalLost -= previousBetAmount;
         betTButton?.click();
-        realBetCtButton.style.boxShadow = "";
-        realBetTButton.style.boxShadow =
-          "rgba(0, 0, 0, 0.16) 0px 1px 11px, rgb(190 106 106) 0px 0px 0px 3px";
 
         console.log("ctAmount", ctAmount);
         console.log("tAmount", tAmount);
@@ -244,9 +227,6 @@
         totalProfit -= previousBetAmount;
         totalLost -= previousBetAmount;
         betCtButton?.click();
-        realBetTButton.style.boxShadow = "";
-        realBetCtButton.style.boxShadow =
-          "rgba(0, 0, 0, 0.16) 0px 1px 11px, rgb(190 106 106) 0px 0px 0px 3px";
 
         console.log("ctAmount", ctAmount);
         console.log("tAmount", tAmount);
@@ -258,7 +238,6 @@
     };
   };
 
-  // Toggle the size of the betting container
   const handleToggleSize = () => {
     isExpanded = !isExpanded;
     betContainer.style.width = isExpanded ? "230px" : "60px";
@@ -282,7 +261,6 @@
     localStorage?.setItem("fxOn", false);
   };
 
-  // Hide specified elements
   const hideElements = (selectors) => {
     selectors.forEach((selector) => {
       const element = document.querySelector(selector);
@@ -290,7 +268,6 @@
     });
   };
 
-  // Create an HTML element with specified tag, CSS, and text content
   const createElement = (tag, cssText, textContent = "", attribute) => {
     const el = document.createElement(tag);
     el.style.cssText = cssText;
@@ -301,7 +278,6 @@
     return el;
   };
 
-  // Create a button with specified text, click handler, and styles
   const createButton = (text, onClick, styles = "") => {
     const button = createElement(
       "button",
@@ -312,7 +288,6 @@
     return button;
   };
 
-  // Create a select element with specified options
   const createSelect = (options) => {
     const select = createElement(
       "select",
@@ -326,7 +301,6 @@
     return select;
   };
 
-  // Create an input element with specified placeholder and default value
   const createInput = (placeholder, defaultValue) => {
     const input = createElement(
       "input",
@@ -338,7 +312,6 @@
     return input;
   };
 
-  // Update local storage with stop total coins lost input value
   const updateLocalStorage = () => {
     localStorage.setItem(
       "stopTotalCoinsLost",
@@ -439,7 +412,6 @@
 
   document.body.appendChild(betContainer);
 
-  // Get the type of the previous roll
   const getPreviousRollType = () => {
     const previousRolls = Array.from(
       document.querySelectorAll(".previous-rolls-item")
@@ -456,7 +428,6 @@
     }
   };
 
-  // Save betting data into local storage
   const saveDataIntoLocalStorage = () => {
     const keyLog = `log-betting-amount-${betAmount}`;
     const now = new Date();
@@ -470,33 +441,22 @@
       .toString()
       .padStart(2, "0")}/${now.getFullYear()}`;
 
-    // Calculate timePlay in minutes
-    const timePlayMinutes = Math.floor((Date.now() - timeStart) / 60000);
-
-    // Save data to localStorage
     localStorage.setItem(
       keyLog,
       JSON.stringify({
         time: formattedTime,
         counterWin,
         totalProfit,
-        profitPerMinute: totalProfit / timePlayMinutes,
         totalLost,
         maxCounterLose,
-        timePlay: `${timePlayMinutes}minutes`,
       })
     );
   };
 
-  // Log betting info to the console
   const logInfo = () => {
-    // Calculate timePlay in minutes
-    const timePlayMinutes = Math.floor((Date.now() - timeStart) / 60000);
     const border = "=============================";
     console.log("counterWin:", counterWin);
-    console.log("timePlay:", `${timePlayMinutes}minutes`);
     console.log("maxCounterLose:", maxCounterLose);
-    console.log("profit per minute:", totalProfit / timePlayMinutes);
     console.log("totalProfit:", totalProfit);
     console.log("totalLost previous round:", totalLost);
     console.log(border);

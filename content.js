@@ -12,10 +12,18 @@
   let totalProfit = 0;
   let totalLost = 0;
   let isPlayLessSide = true;
+  let counterLose = 0;
+  let maxCounterLose = 0;
+  let timeStart = 0;
 
   const stopTotalCoinsLost = localStorage.getItem("stopTotalCoinsLost") || 10;
   const betOptions = [0.01, 0.1, 1];
   const elementsToHide = [
+    ".fixed.bottom-0.right-0.z-50,mb-lg,mr-lg",
+    ".nav-a.relative.ml-sm.flex.gap-xl",
+    '[href="/withdraw"]',
+    '[href="/deposit"]',
+    ".duration-300 mt-xl",
     ".pt-lg",
     "#empire-footer",
     ".chat--open",
@@ -31,6 +39,7 @@
   // Toggle the betting process
   const handleToggleBet = () => {
     hideElements(elementsToHide);
+    timeStart = Date.now();
 
     if (!isRunning) {
       const isConfirmStart = confirm("Want to start?");
@@ -122,7 +131,7 @@
           setTimeout(() => {
             handleBet();
             hideElements(elementsToHide);
-          }, 500);
+          }, 700);
         } else if (
           (!currentTimeText?.includes("2,") &&
             !currentTimeText?.includes("2.")) ||
@@ -148,8 +157,13 @@
         '[data-testid="currency-amount"]'
       );
 
-      const ctAmount = Number(currencyAmounts[2]?.textContent);
-      const tAmount = Number(currencyAmounts[4]?.textContent);
+      const ctAmount = Number(
+        currencyAmounts[2]?.textContent?.replace(",", "")
+      );
+      const tAmount = Number(currencyAmounts[4]?.textContent?.replace(",", ""));
+
+      const realBetCtButton = document.querySelectorAll(".bet-btn")[0];
+      const realBetTButton = document.querySelectorAll(".bet-btn")[2];
 
       const betCtButton = testModeCheckbox.checked
         ? document.querySelector(".wheel__item.absolute")
@@ -159,42 +173,48 @@
         ? document.querySelector(".wheel__item.absolute")
         : document.querySelectorAll(".bet-btn")[2];
 
-      if (previousBetType === getPreviousRollType()) {
-        if (isBetted) {
-          totalProfit += previousBetAmount * 2;
+      if (isBetted) {
+        previousBetAmount = previousBetAmount * 2;
+
+        if (previousBetType === getPreviousRollType()) {
+          clearButton?.click();
           counterWin++;
-          console.log("Win, totalProfit", totalProfit);
+          totalProfit += previousBetAmount;
           saveDataIntoLocalStorage();
-        }
 
-        // Reset validation state
-        totalLost = 0;
-        previousBetAmount = 0;
-        previousBetType = "";
-        isBetted = false;
-        clearButton?.click();
-      } else {
-        if (isBetted) {
-          previousBetAmount = previousBetAmount * 2;
+          // Reset validation state
+          counterLose = 0;
+          totalLost = 0;
+          previousBetAmount = 0;
+          previousBetType = "";
+          isBetted = false;
+
+          // Log profit
+          console.log("Win, totalProfit: ", totalProfit);
+        } else {
           x2Button?.click();
-          console.log("Lose, totalProfit", totalProfit);
+          counterLose++;
+          maxCounterLose = Math.max(counterLose, maxCounterLose);
           saveDataIntoLocalStorage();
 
-          if (totalLost < -stopTotalCoinsLostInput.value) {
+          if (totalLost <= -stopTotalCoinsLostInput.value) {
+            previousBetAmount = 0;
+            totalLost = 0;
+            clearButton?.click();
+          }
+
+          if (totalProfit <= -2 * stopTotalCoinsLostInput.value) {
+            clearButton?.click();
             window.location.reload();
             return;
           }
+
+          // Log profit
+          console.log("Lose, totalProfit: ", totalProfit);
         }
       }
 
-      // if (Math.abs(ctAmount - tAmount) < 100 || !ctAmount || !tAmount) {
-      //   return;
-      // }
-
       if (isPlayLessSide ? ctAmount > tAmount : ctAmount < tAmount) {
-        console.log("ctAmount", ctAmount);
-        console.log("tAmount", tAmount);
-        console.log("betTButton", document.querySelectorAll(".bet-btn")[2]);
         previousBetType = "coin-t";
         isBetted = true;
 
@@ -206,11 +226,13 @@
         totalProfit -= previousBetAmount;
         totalLost -= previousBetAmount;
         betTButton?.click();
-      } else {
+        realBetCtButton.style.boxShadow = "";
+        realBetTButton.style.boxShadow =
+          "rgba(0, 0, 0, 0.16) 0px 1px 11px, rgb(190 106 106) 0px 0px 0px 3px";
+
         console.log("ctAmount", ctAmount);
         console.log("tAmount", tAmount);
-        console.log("betCtButton", document.querySelectorAll(".bet-btn")[0]);
-
+      } else {
         previousBetType = "coin-ct";
         isBetted = true;
 
@@ -222,6 +244,12 @@
         totalProfit -= previousBetAmount;
         totalLost -= previousBetAmount;
         betCtButton?.click();
+        realBetTButton.style.boxShadow = "";
+        realBetCtButton.style.boxShadow =
+          "rgba(0, 0, 0, 0.16) 0px 1px 11px, rgb(190 106 106) 0px 0px 0px 3px";
+
+        console.log("ctAmount", ctAmount);
+        console.log("tAmount", tAmount);
       }
 
       totalProfit = parseFloat(totalProfit.toFixed(5));
@@ -342,13 +370,13 @@
 
   const startBetButton = createButton("Start", handleToggleBet);
   const betSelect = createSelect(betOptions);
-  const labelSelect = createElement("div", "", "Coins to start betting");
+  const labelSelect = createElement("div", "", "C to start");
 
   const stopTotalCoinsLostInput = createInput(
     "Stop when total coins lost",
     stopTotalCoinsLost
   );
-  const labelStopInput = createElement("div", "", "Stop when total coins lost");
+  const labelStopInput = createElement("div", "", "Stop when total C lost");
   stopTotalCoinsLostInput.addEventListener("input", updateLocalStorage);
 
   wrapStopProfitLost.append(stopTotalCoinsLostInput, labelStopInput);
@@ -442,21 +470,33 @@
       .toString()
       .padStart(2, "0")}/${now.getFullYear()}`;
 
+    // Calculate timePlay in minutes
+    const timePlayMinutes = Math.floor((Date.now() - timeStart) / 60000);
+
+    // Save data to localStorage
     localStorage.setItem(
       keyLog,
       JSON.stringify({
         time: formattedTime,
         counterWin,
         totalProfit,
+        profitPerMinute: totalProfit / timePlayMinutes,
         totalLost,
+        maxCounterLose,
+        timePlay: `${timePlayMinutes}minutes`,
       })
     );
   };
 
   // Log betting info to the console
   const logInfo = () => {
+    // Calculate timePlay in minutes
+    const timePlayMinutes = Math.floor((Date.now() - timeStart) / 60000);
     const border = "=============================";
     console.log("counterWin:", counterWin);
+    console.log("timePlay:", `${timePlayMinutes}minutes`);
+    console.log("maxCounterLose:", maxCounterLose);
+    console.log("profit per minute:", totalProfit / timePlayMinutes);
     console.log("totalProfit:", totalProfit);
     console.log("totalLost previous round:", totalLost);
     console.log(border);
