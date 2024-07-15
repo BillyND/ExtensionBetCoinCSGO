@@ -471,7 +471,7 @@
       .padStart(2, "0")}/${now.getFullYear()}`;
 
     // Calculate timePlay in minutes
-    const timePlayMinutes = Math.floor((Date.now() - timeStart) / 60000);
+    const timePlayMinutes = Math.floor((Date.now() - timeStart) / 60000) || 1;
 
     // Save data to localStorage
     localStorage.setItem(
@@ -483,7 +483,7 @@
         profitPerMinute: totalProfit / timePlayMinutes,
         totalLost,
         maxCounterLose,
-        timePlay: `${timePlayMinutes}minutes`,
+        timePlay: `${timePlayMinutes} minutes`,
       })
     );
   };
@@ -491,14 +491,14 @@
   // Log betting info to the console
   const logInfo = () => {
     // Calculate timePlay in minutes
-    const timePlayMinutes = Math.floor((Date.now() - timeStart) / 60000);
+    const timePlayMinutes = Math.floor((Date.now() - timeStart) / 60000) || 1;
     const border = "=============================";
     console.log("counterWin:", counterWin);
-    console.log("timePlay:", `${timePlayMinutes}minutes`);
     console.log("maxCounterLose:", maxCounterLose);
-    console.log("profit per minute:", totalProfit / timePlayMinutes);
     console.log("totalProfit:", totalProfit);
     console.log("totalLost previous round:", totalLost);
+    console.log("timePlay:", `${timePlayMinutes} minutes`);
+    console.log("profit per minute:", totalProfit / timePlayMinutes);
     console.log(border);
   };
 
