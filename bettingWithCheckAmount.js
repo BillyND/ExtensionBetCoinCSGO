@@ -15,6 +15,7 @@
   let counterLose = 0;
   let maxCounterLose = 0;
   let timeStart = 0;
+  let isClickNavigate = false;
 
   const stopTotalCoinsLost = localStorage.getItem("stopTotalCoinsLost") || 10;
   const betOptions = [0.01, 0.1, 1];
@@ -35,6 +36,10 @@
     ".duration-300.mt-xl",
     ".support-wrap",
   ];
+
+  function sleep(time = 1000) {
+    return new Promise((resolve) => setTimeout(resolve, time));
+  }
 
   // Toggle the betting process
   const handleToggleBet = () => {
@@ -108,6 +113,15 @@
       "important"
     );
 
+    const toggleNavigate = async () => {
+      const referralButton = document.querySelector('[href="/referrals"]');
+      const rouletteButton = document.querySelector('[href="/"]');
+
+      referralButton?.click();
+      await sleep(500);
+      rouletteButton?.click();
+    };
+
     if (isRunning) {
       const intervalBetCoin = setInterval(() => {
         if (!isRunning) {
@@ -131,7 +145,7 @@
           setTimeout(() => {
             handleBet();
             hideElements(elementsToHide);
-          }, 700);
+          }, 500);
         } else if (
           (!currentTimeText?.includes("2,") &&
             !currentTimeText?.includes("2.")) ||
@@ -146,7 +160,7 @@
     }
 
     // Handle the betting logic
-    const handleBet = () => {
+    const handleBet = async () => {
       console.clear();
 
       const betControls = Array.from(
@@ -212,6 +226,9 @@
           // Log profit
           console.log("Lose, totalProfit: ", totalProfit);
         }
+
+        // await sleep(2000);
+        // toggleNavigate();
       }
 
       if (isPlayLessSide ? ctAmount > tAmount : ctAmount < tAmount) {
